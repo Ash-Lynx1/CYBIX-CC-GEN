@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: cybix-cc-bot
+    env: node
+    buildCommand: npm install
+    startCommand: node index.js
+    plan: free
+    autoDeploy: true
+    dockerfilePath: ./Dockerfile
