@@ -1,9 +1,16 @@
 services:
   - type: web
-    name: cybix-cc-bot
+    name: cybix-cc
     env: node
-    buildCommand: npm install
-    startCommand: node index.js
     plan: free
-    autoDeploy: true
-    dockerfilePath: ./Dockerfile
+    buildCommand: "npm install"
+    startCommand: "node index.js"
+    envVars:
+      - key: TOKEN
+        sync: false
+      - key: CHANNEL_ID
+        value: "@cybixtech"
+      - key: OWNER_ID
+        value: "6524840104"
+      - key: RENDER_EXTERNAL_URL
+        sync: false

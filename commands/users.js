@@ -1,39 +1,21 @@
-const { sendMessageWithButtons } = require('../helpers/sendMessageWithButtons');
-const config = require('../config');
-
-// Mock example of storing users (replace with actual database logic)
-let users = [
-  { id: 6524840104, username: '@cybixdev' },
-  { id: 123456789, username: '@user1' },
-  { id: 987654321, username: '@user2' }
-];
+const config = require("../config");
 
 module.exports = (bot) => {
-  bot.onText(/\/users/, (msg) => {
-    const chatId = msg.chat.id;
-    const userId = msg.from.id;
-    
-    // Only allow the owner to see the user list
-    if (userId !== config.OWNER_ID) {
-      return bot.sendMessage(chatId, "You do not have permission to view the list of users.");
-    }
-    
-    // Format the list of users
+  bot.command("users", (ctx) => {
+    const users = config.getAllUsers();
     if (users.length === 0) {
-      return bot.sendMessage(chatId, "No users have interacted with the bot yet.");
+      return ctx.reply("📭 No users found yet.");
     }
     
-    let userList = users.map(user => {
-      return `${user.username} (ID: ${user.id})`;
-    }).join('\n');
+    let msg = "👥 *CYBIX Bot Users*\n\n";
+    users.forEach((u, i) => {
+      msg += `${i + 1}. ID: ${u.id} | Type: ${u.type}\n`;
+    });
     
-    sendMessageWithButtons(
-      bot,
-      chatId,
-      `Here are the registered users:\n\n${userList}`,
-      [
-        { text: 'Go Back', callback_data: 'menu' }
-      ]
-    );
+    ctx.replyWithPhoto(config.BANNER_IMG, {
+      caption: msg,
+      parse_mode: "Markdown",
+      reply_markup: { inline_keyboard: config.menuButtons },
+    });
   });
 };

@@ -1,13 +1,73 @@
+require("dotenv").config();
+
+const OWNER_ID = process.env.OWNER_ID || "6524840104";
+const TOKEN = process.env.TOKEN;
+const CHANNEL_ID = process.env.CHANNEL_ID || "@cybixtech";
+const BANNER_IMG = "https://i.imgur.com/8TSnkdN.jpeg";
+
+// In-memory user storage
+let users = [];
+
+function getUserType(id) {
+  const user = users.find((u) => u.id === id);
+  return user ? user.type : "regular";
+}
+
+function canUseCommand(id, limit, intervalSec) {
+  let user = users.find((u) => u.id === id);
+  if (!user) {
+    user = { id, type: "regular", requests: [] };
+    users.push(user);
+  }
+  
+  const now = Date.now();
+  user.requests = user.requests.filter((t) => now - t < intervalSec * 1000);
+  
+  if (user.type === "vvip") return true;
+  if (user.requests.length >= limit) return false;
+  
+  user.requests.push(now);
+  return true;
+}
+
+function addPremium(id) {
+  let user = users.find((u) => u.id === id);
+  if (!user) {
+    users.push({ id, type: "premium", requests: [] });
+  } else {
+    user.type = "premium";
+  }
+}
+
+function addVvip(id) {
+  let user = users.find((u) => u.id === id);
+  if (!user) {
+    users.push({ id, type: "vvip", requests: [] });
+  } else {
+    user.type = "vvip";
+  }
+}
+
+function getAllUsers() {
+  return users;
+}
+
+// Menu buttons
+const menuButtons = [
+  [{ text: "📢 Telegram Channel", url: "https://t.me/cybixtech" }],
+  [{ text: "💬 WhatsApp 1", url: "https://whatsapp.com/channel/0029VbB8svo65yD8WDtzwd0X" }],
+  [{ text: "💬 WhatsApp 2", url: "https://whatsapp.com/channel/0029VbAxGAQK5cD8Y03rnv3K" }],
+];
+
 module.exports = {
-  // Bot Token from BotFather
-  TOKEN: process.env.TOKEN || 'your-telegram-bot-token',
-  
-  // The Telegram channel ID that users must join
-  CHANNEL_ID: '@cybixtech', // Replace with your actual channel ID
-  
-  // Bot owner ID (Only the owner can use certain commands)
-  OWNER_ID: 6524840104, // Replace with your actual Telegram user ID
-  
-  // Optional: You can store premium user data here, or use a database
-  premiumUsers: new Set(), // Example for storing premium users in memory
+  OWNER_ID,
+  TOKEN,
+  CHANNEL_ID,
+  BANNER_IMG,
+  menuButtons,
+  getUserType,
+  canUseCommand,
+  addPremium,
+  addVvip,
+  getAllUsers,
 };

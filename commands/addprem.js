@@ -1,17 +1,22 @@
-const config = require('../config');
+const config = require("../config");
 
 module.exports = (bot) => {
-  bot.onText(/\/addprem (\d+)/, (msg, match) => {
-    const chatId = msg.chat.id;
-    const userId = msg.from.id;
+  bot.command("addprem", (ctx) => {
+    const ownerId = parseInt(config.OWNER_ID);
+    const userId = ctx.from.id;
     
-    // Only the owner can add premium users
-    if (userId !== config.OWNER_ID) {
-      return bot.sendMessage(chatId, "You do not have permission to add premium users.");
+    if (userId !== ownerId) {
+      return ctx.reply("🚫 Only the bot owner can add premium users.");
     }
     
-    const targetUserId = match[1];
-    // Logic to mark the user as premium (e.g., store in DB or memory)
-    bot.sendMessage(chatId, `User ${targetUserId} has been added as a premium user.`);
+    const parts = ctx.message.text.split(" ");
+    if (parts.length < 2) {
+      return ctx.reply("❌ Usage: /addprem <user_id>");
+    }
+    
+    const targetId = parseInt(parts[1]);
+    config.addPremium(targetId);
+    
+    ctx.reply(`✅ User ${targetId} is now *Premium*!`);
   });
 };

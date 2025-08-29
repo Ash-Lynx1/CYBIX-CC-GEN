@@ -1,47 +1,42 @@
-const axios = require('axios');
-const { sendMessageWithButtons } = require('../helpers/sendMessageWithButtons');
+const axios = require("axios");
+const config = require("../config");
 
-module.exports = async (bot) => {
-  bot.onText(/\/gen/, async (msg) => {
-    const chatId = msg.chat.id;
-    const userId = msg.from.id;
-    
+module.exports = (bot) => {
+  bot.command("gen", async (ctx) => {
     try {
-      // Fetch real credit card details from the API
-      const response = await axios.get(`https://apis.davidcyriltech.my.id/tools/ccgen?type=MasterCard&amount=5`);
-      const cards = response.data;
+      const userId = ctx.from.id;
+      const userType = config.getUserType(userId);
       
-      if (!cards || cards.length === 0) {
-        bot.sendMessage(chatId, 'Sorry, no cards could be generated at the moment. Please try again later.');
-        return;
+      // Request limits
+      if (userType === "regular" && !config.canUseCommand(userId, 3, 3600)) {
+        return ctx.reply("⏳ You reached your hourly limit (3). Upgrade to Premium or VVIP.");
+      }
+      if (userType === "premium" && !config.canUseCommand(userId, 30, 3600)) {
+        return ctx.reply("⏳ You reached your hourly limit (30). Upgrade to VVIP.");
       }
       
-      // Format the response with all the details
-      let cardList = cards.map(card => {
-        return `**Card Type:** ${card.type}\n` +
-          `**Card Number:** ${card.card_number}\n` +
-          `**Expiry Date:** ${card.expiry_date}\n` +
-          `**CVV:** ${card.cvv}\n` +
-          `**Bank Name:** ${card.bank_name}\n` +
-          `**Country:** ${card.country}\n` +
-          `**Brand:** ${card.brand}\n` +
-          `**Issuer:** ${card.issuer}\n` +
-          `**Issuer Phone:** ${card.issuer_phone}\n` +
-          `**Issuer Address:** ${card.issuer_address}\n\n`;
-      }).join('');
+      const response = await axios.get("https://apis.davidcyriltech.my.id/tools/ccgen?type=MasterCard&amount=5");
+      const cards = response.data.data || [];
       
-      // Send the details to the user
-      sendMessageWithButtons(
-        bot,
-        chatId,
-        `Here are your generated cards:\n\n${cardList}`,
-        [
-          { text: 'Get Premium', callback_data: 'getprem' }
-        ]
-      );
-    } catch (error) {
-      console.error('Error generating cards:', error);
-      bot.sendMessage(chatId, 'Sorry, there was an issue generating the cards. Please try again later.');
+      if (cards.length === 0) {
+        return ctx.reply("⚠️ No cards generated. Try again later.");
+      }
+      
+      let msg = `💳 *CYBIX CC Generator*\n\n`;
+      cards.forEach((c, i) => {
+        msg += `#${i + 1}\n${c.cardNumber} | ${c.expiry} | ${c.cvv}\n\n`;
+      });
+      
+      ctx.replyWithPhoto(config.BANNER_IMG, {
+        caption: msg,
+        parse_mode: "Markdown",
+        reply_markup: {
+          inline_keyboard: config.menuButtons,
+        },
+      });
+    } catch (err) {
+      console.error(err.message);
+      ctx.reply("❌ Failed to fetch cards. Try again later.");
     }
   });
 };

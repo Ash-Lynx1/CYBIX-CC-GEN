@@ -1,37 +1,60 @@
-const { sendMessageWithButtons } = require('../helpers/sendMessageWithButtons');
-const config = require('../config');
+const sendMessageWithButtons = require("../helpers/sendMessageWithButtons");
+const config = require("../config");
 
-module.exports = (bot) => {
-  bot.onText(/\/menu/, (msg) => {
-    const chatId = msg.chat.id;
-    
-    // Main menu message
-    const text = `
-      **Welcome to CYBIX CC Bot!**
+// track start time
+const startTime = Date.now();
 
-      Here you can generate fake credit cards for fun. Choose an option below:
+// plugins list (we can count commands here manually or dynamically)
+const plugins = ["gen", "getprem", "addprem", "add-vip", "users", "menu"];
 
-      • /gen - Generate fake credit card details
-      • /getprem - Check your premium status
-      • /users - View all bot users (Owner only)
-    `;
-    
-    // Buttons for the main menu
-    const buttons = [
-      { text: 'Get Premium', callback_data: 'getprem' },
-      { text: 'Contact Owner @cybixdev', url: 'tg://resolve?domain=cybixdev' },
-      { text: 'Join Telegram Channel', url: 'https://t.me/cybixtech' },
-      { text: 'Join WhatsApp Channel 1', url: 'https://whatsapp.com/channel/0029VbB8svo65yD8WDtzwd0X' },
-      { text: 'Join WhatsApp Channel 2', url: 'https://whatsapp.com/channel/0029VbAxGAQK5cD8Y03rnv3K' }
-    ];
-    
-    // Send the menu with buttons
-    sendMessageWithButtons(
-      bot,
-      chatId,
-      text,
-      buttons,
-      'https://i.imgur.com/8TSnkdN.jpeg' // Banner Image
-    );
+module.exports = (bot, userStore) => {
+  bot.command("menu", async (ctx) => {
+    try {
+      const userId = ctx.from.id;
+      userStore.addUser(userId); // track unique users
+      
+      // runtime calculation
+      const uptime = Date.now() - startTime;
+      const seconds = Math.floor((uptime / 1000) % 60);
+      const minutes = Math.floor((uptime / (1000 * 60)) % 60);
+      const hours = Math.floor((uptime / (1000 * 60 * 60)) % 24);
+      const days = Math.floor(uptime / (1000 * 60 * 60 * 24));
+      const runtime = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      
+      // fake ping = time taken to reply
+      const before = Date.now();
+      await ctx.reply("⏳ Checking bot status...");
+      const ping = Date.now() - before;
+      
+      const caption = `
+•••••••【 *CYBIX CC* 】•••••••
+» Users: *${userStore.count()}*
+» Prefix: \`/\`
+» Plugins: *${plugins.length}*
+» Status: *${ping}ms*
+» Runtime: *${runtime}*
+
+➪ /gen  
+➪ /getprem  
+➪ /addprem <user id>  
+➪ /add-vip <user id>  
+➪ /users  
+➪ /menu
+`;
+      
+      await sendMessageWithButtons(ctx, config.BANNER_IMG, caption, [
+        [{ text: "📢 Join Channel", url: "https://t.me/cybixtech" }],
+        [
+          { text: "💬 WhatsApp 1", url: "https://whatsapp.com/channel/0029VbB8svo65yD8WDtzwd0X" },
+        ],
+        [
+          { text: "💬 WhatsApp 2", url: "https://whatsapp.com/channel/0029VbAxGAQK5cD8Y03rnv3K" },
+        ],
+        [{ text: "👑 Owner", url: "https://t.me/cybixdev" }],
+      ]);
+    } catch (err) {
+      console.error("Menu error:", err.message);
+      ctx.reply("⚠️ Error loading menu.");
+    }
   });
 };
