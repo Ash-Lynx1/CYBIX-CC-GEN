@@ -1,7 +1,7 @@
 {
   "name": "cybix-cc-gen",
   "version": "1.0.0",
-  "description": "CYBIX CC Telegram Bot (Telegraf + Express, Render-ready)",
+  "description": "CYBIX CC Telegram Bot (single-file, Render-ready)",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
