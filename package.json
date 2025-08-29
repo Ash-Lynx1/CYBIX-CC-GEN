@@ -1,18 +1,16 @@
 {
-  "name": "cybix-cc-gen",
+  "name": "cybix-cc-bot",
   "version": "1.0.0",
-  "description": "CYBIX CC Telegram Bot (single-file, Render-ready)",
+  "description": "CYBIX CC Telegram Bot for Render deployment",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
+  "author": "JadenAfrix1",
+  "license": "MIT",
   "dependencies": {
-    "axios": "^1.7.7",
-    "dotenv": "^16.4.5",
-    "express": "^4.21.1",
-    "telegraf": "^4.16.3"
-  },
-  "engines": {
-    "node": ">=16"
+    "dotenv": "^16.0.3",
+    "node-telegram-bot-api": "^0.61.0",
+    "axios": "^1.7.1"
   }
 }

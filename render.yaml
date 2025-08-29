@@ -1,13 +1,17 @@
 services:
   - type: web
-    name: cybix-cc-gen
+    name: cybix-cc-bot
     env: node
     plan: free
-    buildCommand: "yarn install"
-    startCommand: "node index.js"
+    buildCommand: 'npm install'
+    startCommand: 'npm start'
     envVars:
-      - key: BOT_TOKEN
+      - key: TELEGRAM_BOT_TOKEN
         sync: false
-      - key: PORT
-        value: 10000
+      - key: OWNER_ID
+        sync: false
+      - key: CHANNEL_USERNAME
+        sync: false
     autoDeploy: true
+    healthCheckPath: /
+    repo: https://github.com/Ash-Lynx1/CYBIX-CC-GEN
