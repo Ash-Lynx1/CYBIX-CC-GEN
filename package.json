@@ -1,24 +1,28 @@
 {
   "name": "cybix-cc-bot",
   "version": "1.0.0",
-  "description": "CYBIX CC Generator Bot using Telegraf",
+  "description": "CYBIX CC Generator Telegram Bot using Telegraf and Express",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "keywords": [
-    "telegram",
-    "bot",
+    "telegram-bot",
     "telegraf",
-    "ccgen",
-    "cybix"
+    "express",
+    "cybix",
+    "cc-gen"
   ],
-  "author": "CYBIX Dev",
+  "author": "CYBIX",
   "license": "MIT",
   "dependencies": {
-    "axios": "^1.7.2",
-    "dotenv": "^16.3.1",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
     "telegraf": "^4.16.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
   },
   "engines": {
     "node": ">=16"
