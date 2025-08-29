@@ -15,14 +15,14 @@ fs.readdirSync(path.join(__dirname, 'commands')).forEach(file => {
   }
 });
 
-const BANNER_IMG = 'https://i.imgur.com/8TSnkdN.jpeg';
+const BANNER_IMG = 'https://files.catbox.moe/die17y.jpg';
 const CHANNEL_LINK = 'https://t.me/cybixtech';
 const WHATSAPP1 = 'https://whatsapp.com/channel/0029VbB8svo65yD8WDtzwd0X';
 const WHATSAPP2 = 'https://whatsapp.com/channel/0029VbAxGAQK5cD8Y03rnv3K';
 
 const menuButtons = [
-  [{ text: 'Join Telegram Channel', url: CHANNEL_LINK }],
-  [{ text: 'WhatsApp Channel 1', url: WHATSAPP1 }, { text: 'WhatsApp Channel 2', url: WHATSAPP2 }],
+  [{ text: 'TELEGRAM CHANNEL', url: CHANNEL_LINK }],
+  [{ text: 'WA CHANNEL-1', url: WHATSAPP1 }, { text: 'WA CHANNEL-2', url: WHATSAPP2 }],
   [{ text: 'Menu', callback_data: 'menu' }]
 ];
 
