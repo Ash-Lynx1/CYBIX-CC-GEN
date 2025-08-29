@@ -29,4 +29,4 @@ function getAllUsers() {
   return loadDb();
 }
 
-module.exports = { ensureUserExists, setPremium, getUserType, getAllUsers };
+module.exports = { ensureUserExists, setPremium, getUserType, getAllUsers, saveDb };
