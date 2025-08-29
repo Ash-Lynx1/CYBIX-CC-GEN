@@ -1,17 +1,11 @@
 services:
   - type: web
-    name: cybix-cc-bot
+    name: cybix-cc-gen
     env: node
     plan: free
-    buildCommand: yarn install
-    startCommand: node index.js
+    buildCommand: "yarn install"
+    startCommand: "node index.js"
     envVars:
       - key: BOT_TOKEN
-        sync: false
-      - key: OWNER_ID
-        value: "6524840104"
-      - key: CHANNEL_ID
-        value: "@cybixtech"
-      - key: RENDER_EXTERNAL_URL
         sync: false
     autoDeploy: true
